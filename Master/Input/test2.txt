@@ -1,0 +1,67 @@
+1. Summary
+In this assignment, you will be designing and implementing a distributed MapReduce system. You must write code that implements MapReduce as a "library" that higher level applications can then use for data processing.
+
+2. What To Implement
+2.1. Processes as nodes
+Nodes and tasks are implemented as conventional OS processes. Your application must work on a single OS, as well as on a cluster of machines. Thus, you can only use network-based communication.
+
+2.2. Communication
+Each task must communicate with each others through the use of network sockets, or RPC's, or higher level messaging libraries such as zero-MQ.
+
+2.3. Data storage
+Since we haven't built a distributed file system (yet), you can use a local file system for storing data. You can assume that each node/process has a private data store in form of a directory, and other processes cannot directly access this directory. Remember that all communication must be over network sockets and RPCs, so a process writing a file into another's local data store is not supported in a truly distributed system. For instance, /home/p1/ is the local disk storage of the p1 process, and the process cannot directly read other directories (/home/p2/) using file-system system calls.
+
+BONUS: If you do want shared-storage between processes, you can use your key-value store from the previous assignment as a datastore.
+
+2.4. Master node
+The first thing your program does should be to spawn the master node. The master node then spawns the map and reducer tasks, and controls and coordinates all other processes.
+
+2.5. API
+The user should only interact with the master node through a well-defined API. You must think about what kind of an API the master should expose. For instance, it can be a long-running HTTP server, and you can interact with it through your web-browser. Or, it can be passed parameters through configuration files whose locations are known.
+
+For example, the master can support this external interface:
+
+int cluster_id = init_cluster(num_mappers, num_reducers) This will start the processes, and make the system "ready" to run mapreduce.
+
+run_mapred(input_data, map_fn, reduce_fn, output_location) The inputdata and outputlocation can be a filename. The map and reduce functions can also be file names. For instance, you can pass wordcount_map.py if you want to run wordcount. Alternatively, you could also pass serialized function implementations that the system will then eval(). Or function pointers.
+
+destroy_cluster(cluster_id)
+
+2.6. Fault-tolerance
+This is an optional/bonus component.
+
+Your system should be able to survive process failures. You can choose either data replication or restarting the killed process. You can choose a method of convenience to get this done.
+
+2.7. Applications
+The two main applications you must implement are:
+
+Word-count
+Inverted index
+You can download input datasets from Project Gutenberg.
+
+2.8. Other implementation notes
+Providing a makefile and configuration files and scripts for your project is a must. You will not get any points if we cannot easily compile, run, and test your code.
+
+Similarly, you must provide a few test cases.
+
+Avoid hard-coding anything in your program. This includes IP addresses, port numbers, file-paths, etc. Use command line input parameters, or better yet, use a configuration file. As an example, you can look at the configuration options in Hadoop.
+
+3. Testing
+It is important that you provide multiple test applications for your system. Otherwise, we will have no way of evaluating your submission.
+
+These test cases should be sample MapReduce applications that we have discussed in class. Therefore, you must provide input-data (or input data generation scripts), and the map and reduce functions. We should be able to run these examples without manual intervention—so its crucial to not hardcode any paths or ip addresses.
+
+At a minimum, you must implement the word-count and inverted-index examples. You can use a books from the gutenberg archive as documents.
+
+Distributed systems are hard to test for correctness. One thing that can help is to log important events. This log of events is useful for debugging and evaluation, so please include the log output of your sample applications in your submission.
+
+4. Report
+You must clearly document all facets of your design, with regards to: data parititioning, message formats, RPCs, and how the data and control flows within the system. It is necessary to describe the limitations and assumptions.
+
+Note that a minimum working implementation of this assignment is fairly straight forward. Points will be awarded for clear design and implementation. A program that is faithful to the core components of MapReduce (has the same flow, is general-purpose, achieves some parallel speedup) will be prefered over one that tries to implement all bonus parts, but is constrained to a couple of example applications, implicitly shares state between processes, is not really parallel, etc.
+
+5. Submission
+Your submission directory should include all source code, dependencies, example applications, sample input data, test-cases, few log-file outputs, and the report.
+
+If you use any libraries, they must be included as part of your submission.
+
